@@ -1,0 +1,50 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: cardservice
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: C##bank
+    password: admin
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/bank-realm
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+
+services:
+  users:
+    url: http://localhost:8081
+  accounts:
+    url: http://localhost:8082
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

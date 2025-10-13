@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: userservice
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: C##bank
+    password: admin
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+    show-sql: true
+
+keycloak:
+  server-url: http://localhost:8181
+  realm: banking-app
+  admin-client-id: admin-cli
+  admin-username: admin
+  admin-password: admin
