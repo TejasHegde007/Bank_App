@@ -21,11 +21,13 @@ export class LoginComponent {
 
   onSubmit() {
     this.loading = true;
+    this.error = ''; // reset error on submit
+
     const url = '/realms/banking-app/protocol/openid-connect/token';
 
     const body = new HttpParams()
       .set('client_id', 'users-service')
-      .set('client_secret', '4ng7e682KnVuvfolBaMp3X1zpavksBqU')
+      .set('client_secret', 'Gfsc0uvWfFeUsfy4gXnmoArevjPNpKJl')
       .set('grant_type', 'password')
       .set('username', this.username)
       .set('password', this.password)
@@ -33,21 +35,22 @@ export class LoginComponent {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Accept': 'application/json'
+      Accept: 'application/json',
     });
 
-    console.debug('Sending token request to', url);
     this.http.post<any>(url, body.toString(), { headers }).subscribe({
       next: (response) => {
-        localStorage.setItem('access_token', response.access_token);
         this.loading = false;
+        localStorage.setItem('access_token', response.access_token);
+        alert('Login successful!');
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading = false;
-        console.error('Login failed', err);
+
         if (err?.status === 0) {
-          this.error = 'Cannot reach auth server. Ensure the backend is running and the dev proxy is active.';
+          this.error =
+            'Cannot reach auth server. Ensure the backend is running and the dev proxy is active.';
         } else if (err?.error?.error_description) {
           this.error = err.error.error_description;
         } else if (err?.error?.error) {
@@ -55,7 +58,12 @@ export class LoginComponent {
         } else {
           this.error = 'Login failed. Please check your credentials.';
         }
-      }
+
+        alert(this.error); // show error alert
+
+        // Reload the page to reset form and state
+        window.location.reload();
+      },
     });
   }
 }

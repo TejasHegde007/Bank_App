@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 
@@ -21,16 +21,37 @@ export class Register {
 
   loading = false;
   error = '';
+  passwordMismatch = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  @ViewChild('registerForm') registerForm!: NgForm;
+
+  constructor(private http: HttpClient, private router: Router, private cd: ChangeDetectorRef) {}
+
+  // Called when form inputs change to clear errors and validate passwords
+  checkPasswords() {
+    this.passwordMismatch = this.password !== this.confirmPassword;
+    if (this.passwordMismatch) {
+      this.error = 'Passwords do not match!';
+    } else {
+      this.error = '';
+    }
+  }
 
   onSubmit() {
-    if (this.password !== this.confirmPassword) {
-      this.error = 'Passwords do not match!';
+    this.checkPasswords();
+
+    if (this.passwordMismatch) {
+      return; // Prevent submission if passwords don't match
+    }
+
+    if (!this.registerForm.valid) {
+      this.error = 'Please fill all required fields correctly.';
       return;
     }
 
     this.loading = true;
+    this.error = '';
+
     const url = '/api/users/public/register';
 
     const payload = {
@@ -49,18 +70,15 @@ export class Register {
     this.http.post(url, payload, { headers }).subscribe({
       next: () => {
         this.loading = false;
+        this.error = '';
+        this.cd.markForCheck();
         this.router.navigate(['/']);
       },
-      error: (err) => {
+      error: (error: any) => {
         this.loading = false;
-        console.error('Registration failed', err);
-        if (err?.error?.message) {
-          this.error = err.error.message;
-        } else if (typeof err?.error === 'string') {
-          this.error = err.error;
-        } else {
-          this.error = 'Registration failed. Please try again.';
-        }
+        this.error = 'Unexpected service error. User Already Exists.';
+        console.error('Registration failed:', error); // For debugging only
+        this.cd.markForCheck();
       },
     });
   }

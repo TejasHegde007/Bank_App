@@ -20,6 +20,24 @@
         </endorsedDirs>
     </libraryInfo>
     <libraryInfo home="C:\tools\str4\sts-4.31.0.RELEASE\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.7.v20250502-0916\jre" version="21.0.7"/>
+    <libraryInfo home="C:\Program Files\Java\jre1.8.0_461" version="1.8.0_461">
+        <bootpath>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\resources.jar"/>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\rt.jar"/>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\jsse.jar"/>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\jce.jar"/>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\charsets.jar"/>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\jfr.jar"/>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\classes"/>
+        </bootpath>
+        <extensionDirs>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\ext"/>
+            <entry path="C:\windows\Sun\Java\lib\ext"/>
+        </extensionDirs>
+        <endorsedDirs>
+            <entry path="C:\Program Files\Java\jre1.8.0_461\lib\endorsed"/>
+        </endorsedDirs>
+    </libraryInfo>
     <libraryInfo home="C:\tools\str4\sts-4.31.0.RELEASE\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.7.v20250502-0916" version="21.0.7">
         <bootpath>
             <entry path="null"/>
@@ -47,6 +65,24 @@
         </extensionDirs>
         <endorsedDirs>
             <entry path="C:\Program Files (x86)\Java\jdk-1.8\jre\lib\endorsed"/>
+        </endorsedDirs>
+    </libraryInfo>
+    <libraryInfo home="C:\Program Files\Java\jdk-1.8" version="1.8.0_461">
+        <bootpath>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\resources.jar"/>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\rt.jar"/>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\jsse.jar"/>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\jce.jar"/>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\charsets.jar"/>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\jfr.jar"/>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\classes"/>
+        </bootpath>
+        <extensionDirs>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\ext"/>
+            <entry path="C:\windows\Sun\Java\lib\ext"/>
+        </extensionDirs>
+        <endorsedDirs>
+            <entry path="C:\Program Files\Java\jdk-1.8\jre\lib\endorsed"/>
         </endorsedDirs>
     </libraryInfo>
 </libraryInfos>

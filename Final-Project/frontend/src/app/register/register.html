@@ -1,15 +1,8 @@
 <div class="register-wrapper">
-  <div class="register-card" role="form" aria-labelledby="register-title">
-    <img
-      src="https://img.icons8.com/ios-filled/100/ffffff/bank-building.png"
-      alt="Banking App Logo"
-      class="logo"
-      width="80"
-      height="80"
-      loading="lazy"
-    />
-    <h2 id="register-title" class="title">Create Your Account</h2>
-    <p class="tagline">Secure & fast banking at your fingertips</p>
+  <div class="register-card">
+    <img src="https://img.icons8.com/ios-filled/100/ffffff/bank-building.png" alt="Logo" class="logo" />
+    <h1 class="title">Create Account</h1>
+    <p class="tagline">Join us and start your journey</p>
 
     <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
       <!-- First Name -->
@@ -20,13 +13,20 @@
             id="firstName"
             type="text"
             placeholder="First Name"
-            [(ngModel)]="firstName"
             name="firstName"
+            [(ngModel)]="firstName"
+            #firstNameRef="ngModel"
             required
             autocomplete="given-name"
             [disabled]="loading"
           />
           <span class="icon user-icon"></span>
+        </div>
+        <div
+          *ngIf="firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)"
+          class="error-message"
+        >
+          <div *ngIf="firstNameRef.errors?.['required']">First name is required.</div>
         </div>
       </div>
 
@@ -38,13 +38,20 @@
             id="lastName"
             type="text"
             placeholder="Last Name"
-            [(ngModel)]="lastName"
             name="lastName"
+            [(ngModel)]="lastName"
+            #lastNameRef="ngModel"
             required
             autocomplete="family-name"
             [disabled]="loading"
           />
           <span class="icon user-icon"></span>
+        </div>
+        <div
+          *ngIf="lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)"
+          class="error-message"
+        >
+          <div *ngIf="lastNameRef.errors?.['required']">Last name is required.</div>
         </div>
       </div>
 
@@ -56,13 +63,22 @@
             id="email"
             type="email"
             placeholder="Email"
-            [(ngModel)]="email"
             name="email"
+            [(ngModel)]="email"
+            #emailRef="ngModel"
             required
+            email
             autocomplete="email"
             [disabled]="loading"
           />
           <span class="icon email-icon"></span>
+        </div>
+        <div
+          *ngIf="emailRef.invalid && (emailRef.dirty || emailRef.touched)"
+          class="error-message"
+        >
+          <div *ngIf="emailRef.errors?.['required']">Email is required.</div>
+          <div *ngIf="emailRef.errors?.['email']">Please enter a valid email address.</div>
         </div>
       </div>
 
@@ -74,13 +90,22 @@
             id="phoneNumber"
             type="tel"
             placeholder="Phone Number"
-            [(ngModel)]="phoneNumber"
             name="phoneNumber"
+            [(ngModel)]="phoneNumber"
+            #phoneNumberRef="ngModel"
             required
+            pattern="^[0-9]{10}$"
             autocomplete="tel"
             [disabled]="loading"
           />
           <span class="icon phone-icon"></span>
+        </div>
+        <div
+          *ngIf="phoneNumberRef.invalid && (phoneNumberRef.dirty || phoneNumberRef.touched)"
+          class="error-message"
+        >
+          <div *ngIf="phoneNumberRef.errors?.['required']">Phone Number is required.</div>
+          <div *ngIf="phoneNumberRef.errors?.['pattern']">Enter a valid 10-digit phone number.</div>
         </div>
       </div>
 
@@ -92,13 +117,25 @@
             id="password"
             type="password"
             placeholder="Password"
-            [(ngModel)]="password"
             name="password"
+            [(ngModel)]="password"
+            #passwordRef="ngModel"
             required
+            minlength="8"
             autocomplete="new-password"
+            (input)="checkPasswords()"
             [disabled]="loading"
           />
           <span class="icon lock-icon"></span>
+        </div>
+        <div
+          *ngIf="passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)"
+          class="error-message"
+        >
+          <div *ngIf="passwordRef.errors?.['required']">Password is required.</div>
+          <div *ngIf="passwordRef.errors?.['minlength']">
+            Password must be at least 8 characters.
+          </div>
         </div>
       </div>
 
@@ -110,17 +147,29 @@
             id="confirmPassword"
             type="password"
             placeholder="Confirm Password"
-            [(ngModel)]="confirmPassword"
             name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            #confirmPasswordRef="ngModel"
             required
             autocomplete="new-password"
+            (input)="checkPasswords()"
             [disabled]="loading"
           />
           <span class="icon lock-icon"></span>
         </div>
+        <div
+          *ngIf="passwordMismatch && (confirmPasswordRef.dirty || confirmPasswordRef.touched)"
+          class="error-message"
+        >
+          Passwords do not match!
+        </div>
       </div>
 
-      <button type="submit" class="register-btn" [disabled]="registerForm.invalid || loading">
+      <button
+        type="submit"
+        class="register-btn"
+        [disabled]="registerForm.invalid || passwordMismatch || loading"
+      >
         {{ loading ? 'Registering...' : 'Register' }}
       </button>
     </form>
@@ -129,8 +178,6 @@
       Already have an account? <a routerLink="/">Login here</a>
     </p>
 
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-    </div>
+    <div *ngIf="error && !passwordMismatch" class="error-message">{{ error }}</div>
   </div>
 </div>
