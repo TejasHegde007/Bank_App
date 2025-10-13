@@ -1,0 +1,102 @@
+<nav class="navbar-nav">
+  <div class="navbar-content">
+    <!-- Logo -->
+    <div class="navbar-brand" [routerLink]="['/']">
+      <div class="navbar-logo"><span class="navbar-logo-text">SB</span></div>
+      <span class="navbar-title">SecureBank</span>
+    </div>
+
+    <!-- Desktop Links -->
+    <div class="navbar-links" *ngIf="isLoggedIn">
+      <a [routerLink]="['/dashboard']" class="navbar-link">
+        Dashboard <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/accounts']" class="navbar-link">
+        Accounts <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/fund-transfer']" class="navbar-link">
+        Transfer <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/transactions']" class="navbar-link">
+        Transactions <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/loans']" class="navbar-link">
+        Loans <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/cards']" class="navbar-link">
+        Cards <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/admin']" class="navbar-link">
+        Admin <span class="navbar-link-underline"></span>
+      </a>
+      <a [routerLink]="['/monitoring']" class="navbar-link">
+        Monitoring <span class="navbar-link-underline"></span>
+      </a>
+    </div>
+
+    <!-- Actions -->
+    <div class="navbar-actions">
+      <!-- Theme Toggle -->
+      <button (click)="toggleTheme()" class="theme-toggle"
+              [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'">
+        <svg class="theme-icon" [class.rotated]="isDarkMode" fill="currentColor" viewBox="0 0 20 20">
+          <path *ngIf="!isDarkMode" d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          <path *ngIf="isDarkMode" d="M10 2L13.09 8.26L20 9L14 14.74L15.18 21.02L10 17.77L4.82 21.02L6 14.74L0 9L6.91 8.26L10 2Z"></path>
+        </svg>
+      </button>
+
+      <!-- User Info -->
+      <div *ngIf="isLoggedIn" class="navbar-user">
+        <div class="navbar-user-info">
+          <div class="navbar-avatar">
+            <span class="navbar-avatar-text">{{ currentUserName.charAt(0) }}</span>
+          </div>
+          <span class="navbar-username">{{ currentUserName }}</span>
+        </div>
+
+        <button (click)="logout()" class="btn-secondary">
+          <span class="navbar-logout-text">Logout</span>
+          <svg class="navbar-logout-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Login Button -->
+      <button *ngIf="!isLoggedIn" [routerLink]="['/login']" class="btn-glow">Login</button>
+
+      <!-- Mobile Menu -->
+      <button *ngIf="isMobile && isLoggedIn" (click)="toggleSidenav()" class="mobile-menu-btn">
+        <svg class="mobile-menu-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div *ngIf="isMobile && isSidenavOpen && isLoggedIn" class="mobile-sidebar" (click)="toggleSidenav()">
+  <div class="mobile-sidebar-overlay"></div>
+  <div class="mobile-sidebar-content" (click)="$event.stopPropagation()">
+    <div class="mobile-sidebar-header">
+      <span class="mobile-sidebar-title">Menu</span>
+      <button (click)="toggleSidenav()" class="mobile-sidebar-close">X</button>
+    </div>
+    <nav class="mobile-sidebar-nav">
+      <a [routerLink]="['/dashboard']" (click)="toggleSidenav()" class="mobile-nav-link">Dashboard</a>
+      <a [routerLink]="['/accounts']" (click)="toggleSidenav()" class="mobile-nav-link">Accounts</a>
+      <a [routerLink]="['/fund-transfer']" (click)="toggleSidenav()" class="mobile-nav-link">Transfer</a>
+      <a [routerLink]="['/transactions']" (click)="toggleSidenav()" class="mobile-nav-link">Transactions</a>
+      <a [routerLink]="['/loans']" (click)="toggleSidenav()" class="mobile-nav-link">Loans</a>
+      <a [routerLink]="['/cards']" (click)="toggleSidenav()" class="mobile-nav-link">Cards</a>
+      <a [routerLink]="['/admin']" (click)="toggleSidenav()" class="mobile-nav-link">Admin</a>
+      <a [routerLink]="['/monitoring']" (click)="toggleSidenav()" class="mobile-nav-link">Monitoring</a>
+    </nav>
+  </div>
+</div>
+
+<!-- Main content slot -->
+<div class="main-content">
+  <ng-content></ng-content>
+</div>

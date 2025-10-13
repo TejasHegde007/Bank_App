@@ -1,0 +1,14 @@
+{
+  "/realms/banking-app": {
+    "target": "http://localhost:8181",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

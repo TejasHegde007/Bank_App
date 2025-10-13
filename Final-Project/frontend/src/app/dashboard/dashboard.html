@@ -1,0 +1,267 @@
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Dashboard Overview</h1>
+          <p>Welcome back! Here's your financial summary</p>
+        </div>
+        <div class="header-actions">
+          <button class="refresh-btn" (click)="refreshData()">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Summary Cards Grid -->
+    <section class="summary-section">
+      <div class="summary-grid">
+        <!-- Total Balance Card -->
+        <div class="summary-card balance-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Total Balance</h3>
+            <p class="card-value">{{ getTotalBalance() | currency:'USD':'symbol':'1.2-2' }}</p>
+            <span class="card-change positive">+2.5% from last month</span>
+          </div>
+        </div>
+
+        <!-- Total Income Card -->
+        <div class="summary-card income-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Monthly Income</h3>
+            <p class="card-value">{{ getMonthlyIncome() | currency:'USD':'symbol':'1.2-2' }}</p>
+            <span class="card-change positive">+12.3% from last month</span>
+          </div>
+        </div>
+
+        <!-- Total Expenses Card -->
+        <div class="summary-card expense-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Monthly Expenses</h3>
+            <p class="card-value">{{ getMonthlyExpenses() | currency:'USD':'symbol':'1.2-2' }}</p>
+            <span class="card-change negative">+5.7% from last month</span>
+          </div>
+        </div>
+
+        <!-- Active Accounts Card -->
+        <div class="summary-card accounts-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Active Accounts</h3>
+            <p class="card-value">{{ accounts.length }}</p>
+            <span class="card-change neutral">{{ getAccountTypesCount() }} account types</span>
+          </div>
+        </div>
+
+        <!-- Active Loans Card -->
+        <div class="summary-card loans-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Active Loans</h3>
+            <p class="card-value">{{ loanSummary.activeLoans || 0 }}</p>
+            <span class="card-change neutral">${{ loanSummary.totalOutstanding || 0 }} outstanding</span>
+          </div>
+        </div>
+
+        <!-- Active Cards Card -->
+        <div class="summary-card cards-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Active Cards</h3>
+            <p class="card-value">{{ cardSummary.activeCards || 0 }}</p>
+            <span class="card-change neutral">${{ cardSummary.totalLimit || 0 }} limit</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="main-content-grid">
+
+      <!-- Left Column -->
+      <div class="main-left-column">
+
+        <!-- Quick Actions -->
+        <section class="quick-actions-section">
+          <h2>Quick Actions</h2>
+          <div class="actions-grid">
+            <div class="action-card" [routerLink]="['/fund-transfer']">
+              <div class="action-icon">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 10-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="action-content">
+                <h3>Transfer Money</h3>
+                <p>Send funds instantly</p>
+              </div>
+            </div>
+
+            <div class="action-card" [routerLink]="['/accounts']">
+              <div class="action-icon">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+                </svg>
+              </div>
+              <div class="action-content">
+                <h3>View Accounts</h3>
+                <p>Manage your accounts</p>
+              </div>
+            </div>
+
+            <div class="action-card" [routerLink]="['/transactions']">
+              <div class="action-icon">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="action-content">
+                <h3>Transaction History</h3>
+                <p>View all transactions</p>
+              </div>
+            </div>
+
+            <div class="action-card">
+              <div class="action-icon">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="action-content">
+                <h3>Support</h3>
+                <p>Get help & support</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Account Overview -->
+        <section class="accounts-overview-section">
+          <div class="section-header">
+            <h2>Account Overview</h2>
+            <button class="view-all-btn" [routerLink]="['/accounts']">View All</button>
+          </div>
+
+          <div *ngIf="accounts.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <h3>No Accounts Found</h3>
+            <p>Open a new account to get started</p>
+          </div>
+
+          <div *ngIf="accounts.length > 0" class="accounts-list">
+            <div *ngFor="let account of accounts.slice(0, 3)" class="account-item">
+              <div class="account-info">
+                <div class="account-type">{{ account.type }}</div>
+                <div class="account-number">{{ account.accountNumber }}</div>
+              </div>
+              <div class="account-balance">
+                {{ account.balance | currency:'USD':'symbol':'1.2-2' }}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column -->
+      <div class="main-right-column">
+
+        <!-- Spending Analytics -->
+        <section class="analytics-section">
+          <div class="section-header">
+            <h2>Spending Analytics</h2>
+            <div class="chart-period-selector">
+              <select class="period-select">
+                <option>Last 6 months</option>
+                <option>Last 3 months</option>
+                <option>Last month</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="chart-container">
+              <canvas class="chart-canvas"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Transactions -->
+        <section class="recent-transactions-section">
+          <div class="section-header">
+            <h2>Recent Transactions</h2>
+            <button class="view-all-btn" [routerLink]="['/transactions']">View All</button>
+          </div>
+
+          <div *ngIf="transactions.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7.5a.5.5 0 01.5-.5h.01a.5.5 0 01.5.5v3a.5.5 0 01-.5.5H8.5a.5.5 0 01-.5-.5V7.5zM8.5 12a.5.5 0 100 1h.01a.5.5 0 100-1H8.5z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <h3>No Recent Transactions</h3>
+            <p>Your transaction history will appear here</p>
+          </div>
+
+          <div *ngIf="transactions.length > 0" class="transactions-list">
+            <div *ngFor="let transaction of transactions" class="transaction-item">
+              <div class="transaction-icon" [class]="transaction.type.toLowerCase()">
+                <svg *ngIf="transaction.type === 'Credit'" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <svg *ngIf="transaction.type === 'Debit'" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="transaction-details">
+                <div class="transaction-description">{{ transaction.type }} Transaction</div>
+                <div class="transaction-meta">{{ transaction.date | date:'shortDate' }} • {{ transaction.fromAccount }} → {{ transaction.toAccount }}</div>
+              </div>
+              <div class="transaction-amount" [class]="transaction.type.toLowerCase()">
+                <span *ngIf="transaction.type === 'Credit'">+</span>
+                <span *ngIf="transaction.type === 'Debit'">-</span>
+                {{ transaction.amount | currency:'USD':'symbol':'1.0-0' }}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

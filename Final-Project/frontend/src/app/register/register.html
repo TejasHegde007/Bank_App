@@ -1,0 +1,136 @@
+<div class="register-wrapper">
+  <div class="register-card" role="form" aria-labelledby="register-title">
+    <img
+      src="https://img.icons8.com/ios-filled/100/ffffff/bank-building.png"
+      alt="Banking App Logo"
+      class="logo"
+      width="80"
+      height="80"
+      loading="lazy"
+    />
+    <h2 id="register-title" class="title">Create Your Account</h2>
+    <p class="tagline">Secure & fast banking at your fingertips</p>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
+      <!-- First Name -->
+      <div class="input-group">
+        <label for="firstName" class="visually-hidden">First Name</label>
+        <div class="input-icon">
+          <input
+            id="firstName"
+            type="text"
+            placeholder="First Name"
+            [(ngModel)]="firstName"
+            name="firstName"
+            required
+            autocomplete="given-name"
+            [disabled]="loading"
+          />
+          <span class="icon user-icon"></span>
+        </div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="input-group">
+        <label for="lastName" class="visually-hidden">Last Name</label>
+        <div class="input-icon">
+          <input
+            id="lastName"
+            type="text"
+            placeholder="Last Name"
+            [(ngModel)]="lastName"
+            name="lastName"
+            required
+            autocomplete="family-name"
+            [disabled]="loading"
+          />
+          <span class="icon user-icon"></span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="input-group">
+        <label for="email" class="visually-hidden">Email</label>
+        <div class="input-icon">
+          <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            autocomplete="email"
+            [disabled]="loading"
+          />
+          <span class="icon email-icon"></span>
+        </div>
+      </div>
+
+      <!-- Phone Number -->
+      <div class="input-group">
+        <label for="phoneNumber" class="visually-hidden">Phone Number</label>
+        <div class="input-icon">
+          <input
+            id="phoneNumber"
+            type="tel"
+            placeholder="Phone Number"
+            [(ngModel)]="phoneNumber"
+            name="phoneNumber"
+            required
+            autocomplete="tel"
+            [disabled]="loading"
+          />
+          <span class="icon phone-icon"></span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="input-group">
+        <label for="password" class="visually-hidden">Password</label>
+        <div class="input-icon">
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            autocomplete="new-password"
+            [disabled]="loading"
+          />
+          <span class="icon lock-icon"></span>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="input-group">
+        <label for="confirmPassword" class="visually-hidden">Confirm Password</label>
+        <div class="input-icon">
+          <input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            required
+            autocomplete="new-password"
+            [disabled]="loading"
+          />
+          <span class="icon lock-icon"></span>
+        </div>
+      </div>
+
+      <button type="submit" class="register-btn" [disabled]="registerForm.invalid || loading">
+        {{ loading ? 'Registering...' : 'Register' }}
+      </button>
+    </form>
+
+    <p class="register-link">
+      Already have an account? <a routerLink="/">Login here</a>
+    </p>
+
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+  </div>
+</div>

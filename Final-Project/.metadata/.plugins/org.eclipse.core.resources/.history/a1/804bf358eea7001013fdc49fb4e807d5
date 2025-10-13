@@ -1,0 +1,5 @@
+package com.bankingapp.loanservice.config;
+
+public class SecurityConfig {
+
+}

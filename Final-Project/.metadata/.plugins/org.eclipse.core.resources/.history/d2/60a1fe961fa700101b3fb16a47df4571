@@ -1,0 +1,35 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: accountservice
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: bank
+    password: admin
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        format_sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/banking-app   # ? Keycloak realm & port updated
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+userservice:
+  url: http://localhost:8081   # ? UserService base URL

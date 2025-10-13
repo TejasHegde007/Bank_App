@@ -1,0 +1,295 @@
+<div class="transactions-container">
+  <div class="content-area">
+
+    <!-- Header -->
+    <div class="transactions-header">
+      <h1>Transaction <span class="text-gradient">History</span></h1>
+      <p>View and analyze all your financial transactions</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+      <!-- Total Transactions -->
+      <div class="summary-card">
+        <div class="card-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Total Transactions</h3>
+          <p class="card-value">{{ transactions.length }}</p>
+        </div>
+      </div>
+
+      <!-- Total Income -->
+      <div class="summary-card">
+        <div class="card-icon income">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Total Income</h3>
+          <p class="card-value income">{{ totalIncome | currency:'USD':'symbol':'1.2-2' }}</p>
+        </div>
+      </div>
+
+      <!-- Total Expenses -->
+      <div class="summary-card">
+        <div class="card-icon expense">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Total Expenses</h3>
+          <p class="card-value expense">{{ totalExpenses | currency:'USD':'symbol':'1.2-2' }}</p>
+        </div>
+      </div>
+
+      <!-- Net Balance -->
+      <div class="summary-card">
+        <div class="card-icon balance">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Net Balance</h3>
+          <p class="card-value" [class]="(totalIncome - totalExpenses) >= 0 ? 'positive' : 'negative'">
+            {{ (totalIncome - totalExpenses) | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+      <div class="filters-content">
+
+        <!-- Search -->
+        <div class="search-wrapper">
+          <div class="search-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            placeholder="Search transactions..."
+            class="search-input">
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-controls">
+
+          <!-- Type Filter -->
+          <div class="select-wrapper">
+            <select
+              [(ngModel)]="typeFilter"
+              (change)="onFilterChange()"
+              class="filter-select">
+              <option value="all">All Types</option>
+              <option value="Credit">Income</option>
+              <option value="Debit">Expenses</option>
+            </select>
+            <div class="select-arrow">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sort By -->
+          <div class="select-wrapper">
+            <select
+              [(ngModel)]="sortBy"
+              (change)="onSort()"
+              class="filter-select">
+              <option value="date">Sort by Date</option>
+              <option value="amount">Sort by Amount</option>
+              <option value="type">Sort by Type</option>
+            </select>
+            <div class="select-arrow">
+              <svg fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sort Order -->
+          <button
+            (click)="toggleSortOrder()"
+            class="sort-btn"
+            [class.desc]="sortOrder === 'desc'">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+
+          <!-- Clear Filters -->
+          <button
+            (click)="clearFilters()"
+            class="clear-btn">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="transactions-section">
+      <div *ngIf="filteredTransactions.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h3>No Transactions Found</h3>
+        <p>Try adjusting your search or filter criteria</p>
+      </div>
+
+      <div *ngIf="filteredTransactions.length > 0" class="transactions-table-container">
+        <!-- Table Header -->
+        <div class="table-header">
+          <div class="table-row">
+            <div class="table-cell header-cell">Date</div>
+            <div class="table-cell header-cell">Transaction ID</div>
+            <div class="table-cell header-cell">Type</div>
+            <div class="table-cell header-cell">Amount</div>
+            <div class="table-cell header-cell">Balance</div>
+            <div class="table-cell header-cell">Description</div>
+          </div>
+        </div>
+
+        <!-- Table Body -->
+        <div class="table-body">
+          <div
+            *ngFor="let transaction of paginatedTransactions; let i = index"
+            class="table-row transaction-row"
+            [style.animation-delay.ms]="i * 50"
+            (click)="openTransactionDetails(transaction)">
+            <div class="table-cell">{{ transaction.date | date:'mediumDate' }}</div>
+            <div class="table-cell transaction-id">{{ transaction.id || 'TXN-' + (i + 1) }}</div>
+            <div class="table-cell">
+              <span class="type-badge" [class]="transaction.type.toLowerCase()">
+                {{ transaction.type }}
+              </span>
+            </div>
+            <div class="table-cell amount-cell" [class]="transaction.type.toLowerCase()">
+              <span *ngIf="transaction.type === 'Debit'">-</span>{{ transaction.amount | currency:'USD':'symbol':'1.2-2' }}
+            </div>
+            <div class="table-cell balance-cell">--</div>
+            <div class="table-cell description-cell">
+              <div class="transaction-description">
+                <div class="description-main">{{ transaction.type }} Transaction</div>
+                <div class="description-details">From: {{ transaction.fromAccount }} → To: {{ transaction.toAccount }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-section" *ngIf="totalPages > 1">
+        <div class="pagination-info">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ currentPageEnd }} of {{ filteredTransactions.length }} transactions
+        </div>
+
+        <div class="pagination-controls">
+          <button
+            (click)="goToPage(currentPage - 1)"
+            [disabled]="currentPage === 1"
+            class="pagination-btn prev">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 011.414-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4z" clip-rule="evenodd"></path>
+            </svg>
+            Previous
+          </button>
+
+          <div class="pagination-numbers">
+            <button
+              *ngFor="let page of visiblePageNumbers; let i = index"
+              [class.active]="currentPage === page"
+              (click)="goToPage(page)"
+              class="page-number">
+              {{ page }}
+            </button>
+          </div>
+
+          <button
+            (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+            class="pagination-btn next">
+            Next
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 01-1.414 1.414L8.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transaction Details Modal -->
+<div *ngIf="selectedTransaction" class="modal-overlay" (click)="closeTransactionDetails()">
+  <div class="modal-content transaction-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Transaction Details</h3>
+      <button class="modal-close" (click)="closeTransactionDetails()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="transaction-details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Transaction ID</span>
+          <span class="detail-value">{{ selectedTransaction.id || 'TXN-' + selectedTransactionIndex }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Date & Time</span>
+          <span class="detail-value">{{ selectedTransaction.date | date:'medium' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Type</span>
+          <span class="detail-value">
+            <span class="type-badge" [class]="selectedTransaction.type.toLowerCase()">
+              {{ selectedTransaction.type }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Amount</span>
+          <span class="detail-value amount-highlight" [class]="selectedTransaction.type.toLowerCase()">
+            <span *ngIf="selectedTransaction.type === 'Debit'">-</span>{{ selectedTransaction.amount | currency:'USD':'symbol':'1.2-2' }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">From Account</span>
+          <span class="detail-value">{{ selectedTransaction.fromAccount }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">To Account</span>
+          <span class="detail-value">{{ selectedTransaction.toAccount }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ selectedTransaction.type }} transaction processed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeTransactionDetails()">Close</button>
+      <button class="btn-primary">Download Receipt</button>
+    </div>
+  </div>
+</div>

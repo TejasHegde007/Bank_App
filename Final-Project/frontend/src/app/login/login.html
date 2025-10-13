@@ -1,0 +1,57 @@
+<form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <!-- Bank icon image instead of emoji -->
+      <img 
+        src="https://img.icons8.com/ios-filled/100/ffffff/bank-building.png" 
+        alt="Banking App Logo" 
+        class="logo" 
+        width="40" 
+        height="40"
+        loading="lazy"
+        style="vertical-align: middle; margin-right: 8px;"
+      />
+      <h1 class="title" style="display: inline-block; vertical-align: middle;">Banking App</h1>
+
+      <div class="input-group">
+        <label for="username">Usermail</label>
+        <input
+          type="text"
+          id="username"
+          [(ngModel)]="username"
+          name="username"
+          placeholder="Enter your usermail"
+          required
+          autocomplete="username"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+          autocomplete="current-password"
+          [disabled]="loading"
+        />
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid || loading" class="login-btn">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </button>
+
+      <p class="register-link">
+        Don't have an account? <a routerLink="/register">Create Account</a>
+      </p>
+    </div>
+  </div>
+</form>
+
+<div *ngIf="error" style="color: red; margin-top: 8px;">
+  {{ error }}
+</div>
