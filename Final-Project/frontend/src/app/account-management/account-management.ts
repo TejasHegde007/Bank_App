@@ -47,17 +47,57 @@ export class AccountManagementComponent implements OnInit {
   }
 
   loadAccounts(): void {
-    this.loading = true;
-    this.accountService.getAccounts().subscribe({
-      next: (data: Account[]) => {
-        this.accounts = data;
-        this.loading = false;
-      },
-      error: (error: any) => {
-        console.error('Error loading accounts:', error);
-        this.loading = false;
+    // Read accounts from localStorage.account_detail instead of calling API
+    this.loading = false; // no loading UI; we'll show empty state when there are no accounts
+
+    try {
+      const raw = (typeof window !== 'undefined') ? localStorage.getItem('account_detail') : null;
+      if (raw) {
+        console.log('Raw localStorage.account_detail:', raw);
+        const parsed = JSON.parse(raw);
+
+        // 1) If it's already an array, use it
+        if (Array.isArray(parsed)) {
+          this.accounts = parsed as Account[];
+        }
+        // 2) If it has an `accounts` property that's an array, use that
+        else if (parsed && Array.isArray((parsed as any).accounts)) {
+          this.accounts = (parsed as any).accounts as Account[];
+        }
+        // 3) If it's an object with numeric keys like {"0": {...}, "1": {...}},
+        //    convert to an array preserving numeric order
+        else if (parsed && typeof parsed === 'object') {
+          const keys = Object.keys(parsed);
+          const allNumeric = keys.length > 0 && keys.every(k => String(Number(k)) === k);
+          if (allNumeric) {
+            this.accounts = keys
+              .map(k => ({ key: Number(k), val: (parsed as any)[k] }))
+              .sort((a, b) => a.key - b.key)
+              .map(x => x.val as Account);
+          } else {
+            // 4) Maybe it's an object whose values are account objects (non-numeric keys)
+            //    e.g., { acctA: {...}, acctB: {...} } -> take values that look like accounts
+            const values = Object.values(parsed).filter(v => v && typeof v === 'object');
+            if (values.length > 0 && values.every(v => (v as any).accountNumber || (v as any).type)) {
+              this.accounts = values as Account[];
+            }
+            // 5) If it's a single account-like object, wrap it
+            else if ((parsed as any).accountNumber || (parsed as any).type) {
+              this.accounts = [parsed as Account];
+            } else {
+              this.accounts = [];
+            }
+          }
+        } else {
+          this.accounts = [];
+        }
+      } else {
+        this.accounts = [];
       }
-    });
+    } catch (err) {
+      console.error('Error parsing localStorage.account_detail', err);
+      this.accounts = [];
+    }
   }
 
   get filteredAccounts(): Account[] {

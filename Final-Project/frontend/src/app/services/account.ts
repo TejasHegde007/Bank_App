@@ -24,7 +24,8 @@ export class AccountService {
   // POST /api/accounts (AccountRequestDto)
   // { userId: number, accountType: 'SAVINGS'|'CHECKING'|'BUSINESS', initialBalance: number }
   createAccount(newAccount: Partial<Account>): Observable<Account> {
-    const userId = localStorage.getItem('user_id');
+    const user  = localStorage.getItem('user') || null;
+    const userId = user ? JSON.parse(user).userId : null;
     const rawType = newAccount.type ?? 'SAVINGS';
     const enumType = this.toAccountTypeEnum(rawType);
     const payload: any = {
@@ -46,7 +47,8 @@ export class AccountService {
     const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
     if (isBrowser) {
       try {
-        const userIdRawDebug = localStorage.getItem('user_id');
+        const user  = localStorage.getItem('user') || null;
+        const userIdRawDebug = user ? JSON.parse(user).userId : null;
         // Log userId from storage (raw, no conversion)
         console.log('AccountService.createAccount -> userId (from localStorage, raw):', userIdRawDebug);
         // Log Authorization header preview

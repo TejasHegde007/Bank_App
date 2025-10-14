@@ -37,13 +37,85 @@ export class LoginComponent {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'application/json',
     });
-
+    console.debug('Sending token request to', url);
     this.http.post<any>(url, body.toString(), { headers }).subscribe({
       next: (response) => {
-        this.loading = false;
-        localStorage.setItem('access_token', response.access_token);
-        alert('Login successful!');
-        this.router.navigate(['/dashboard']);
+        if (response?.access_token) {
+          localStorage.setItem('access_token', response.access_token);
+        }
+        if (response?.id_token) {
+          localStorage.setItem('id_token', response.id_token);
+        }
+        try {
+          const jwt = (response?.id_token || response?.access_token) as string;
+          const payloadPart = jwt.split('.')[1];
+          const base64 = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split('')
+              .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+              .join('')
+          );
+          const claims = JSON.parse(jsonPayload) || {};
+          const userId = claims.sub || '';
+          const userName = claims.preferred_username || claims.name || this.username || 'User';
+
+          if (userId) {
+            localStorage.setItem('user_id', userId);
+          }
+          if (userName) {
+            localStorage.setItem('user_name', userName);
+          }
+        }catch {
+          // Ignore decode errors; tokens still stored above
+        }
+        const userLookupEmail = this.username;
+        const token2 = localStorage.getItem('access_token') || '';
+        const authHeaders2 = new HttpHeaders({
+          Authorization: `Bearer ${token2}`
+        });
+        this.http.get<number>(`/api/users/userIdByEmailId/${userLookupEmail}`, { headers: authHeaders2 }).subscribe({
+          next: (userIdVal) => {
+            localStorage.setItem('user', JSON.stringify(userIdVal));
+            localStorage.removeItem('user_id');
+            console.log('localStorage.user:', localStorage.getItem('user'));
+            var userObj;
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+              userObj = JSON.parse(userStr);
+              console.log(userObj.userId);
+            }
+            console.log(userObj.userId);
+            
+            
+
+            // ✅ Now fetch account details for this user
+            const accountUrl = `http://localhost:8082/api/accounts/user/${userObj.userId}`;
+            this.http.get<any>(accountUrl, { headers: authHeaders2 }).subscribe({
+              next: (accountDetails) => {
+                localStorage.setItem('account_details', JSON.stringify(accountDetails));
+                console.log('localStorage.account_details:', accountDetails);
+                this.loading = false;
+                this.loading = false;
+                localStorage.setItem('access_token', response.access_token);
+                alert('Login successful!');
+                this.router.navigate(['/dashboard']);
+              },
+              error: (accErr) => {
+                console.error('Failed to fetch account details', accErr);
+                this.loading = false;
+                // still navigate to dashboard even if account fetch fails
+                this.router.navigate(['/dashboard']);
+              }
+            });
+          },
+          error: (e) => {
+            console.error('Failed to fetch userIdByEmailId', e);
+            this.loading = false;
+            this.router.navigate(['/dashboard']);
+          }
+        });
+        
       },
       error: (err) => {
         this.loading = false;

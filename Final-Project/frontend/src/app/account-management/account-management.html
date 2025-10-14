@@ -101,23 +101,19 @@
 
     <!-- Accounts List -->
     <div class="accounts-section">
-      <div *ngIf="loading" class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>Loading accounts...</p>
-      </div>
-
-      <div *ngIf="!loading && filteredAccounts.length === 0" class="empty-state">
+      <!-- We do not show a loading screen. If there are no accounts stored, show a friendly message. -->
+      <div *ngIf="filteredAccounts.length === 0" class="empty-state">
         <div class="empty-icon">
           <svg fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
           </svg>
         </div>
-        <h3>No Accounts Found</h3>
-        <p>No accounts match your current filters</p>
-        <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+        <h3>No Accounts present for user</h3>
+        <p>Please open an account to get started.</p>
+        <button class="btn-primary" (click)="openCreateForm()">Open New Account</button>
       </div>
 
-      <div *ngIf="!loading && filteredAccounts.length > 0" class="accounts-grid">
+      <div *ngIf="filteredAccounts.length > 0" class="accounts-grid">
         <div
           *ngFor="let account of filteredAccounts"
           class="account-card"
