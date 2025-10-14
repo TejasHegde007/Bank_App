@@ -1,0 +1,253 @@
+<div class="accounts-container">
+  <div class="content-area">
+
+    <!-- Header -->
+    <div class="accounts-header">
+      <div class="header-content">
+        <div>
+          <h1>My <span class="text-gradient">Accounts</span></h1>
+          <p>Manage and view all your banking accounts in one place</p>
+        </div>
+        <button class="btn-primary" (click)="openCreateForm()">+ Create Account</button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading accounts...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && accounts.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+        </svg>
+      </div>
+      <h3>No Accounts Yet</h3>
+      <p>You haven't added any accounts yet. Create your first account to get started.</p>
+      <button class="btn-glow" (click)="openCreateForm()">Create New Account</button>
+    </div>
+
+    <!-- Accounts Grid -->
+    <div *ngIf="!loading && accounts.length > 0" class="accounts-grid">
+      <div *ngFor="let account of accounts; let i = index" class="account-card-wrapper" [style.animationDelay]="i * 100 + 'ms'">
+
+        <!-- 3D Card -->
+        <div class="gradient-border">
+          <div class="account-card">
+
+            <!-- Account Header -->
+            <div class="account-card-header">
+              <div class="account-icon">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+                </svg>
+              </div>
+              <div class="account-status">
+                <span class="status-dot" [style.background-color]="getAccountStatusColor(account.status || 'ACTIVE')"></span>{{ account.status || 'ACTIVE' }}
+              </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="account-info">
+              <h3>{{ account.type }}</h3>
+              <p class="account-number">{{ account.accountNumber }}</p>
+            </div>
+
+            <!-- Balance -->
+            <div class="account-balance-section">
+              <p class="balance-label">Current Balance</p>
+              <p class="account-balance">{{ account.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+              <div class="balance-status">
+                <div class="status-indicator"></div>
+                <span>Available</span>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="account-actions">
+              <button class="btn-secondary" (click)="openDepositForm(account)">Deposit</button>
+              <button class="btn-secondary" (click)="openWithdrawForm(account)">Withdraw</button>
+              <div class="action-menu">
+                <button class="btn-menu" (click)="openEditForm(account)">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                  </svg>
+                </button>
+                <button class="btn-menu" (click)="openDeleteModal(account)">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div *ngIf="!loading && accounts.length > 0" class="accounts-summary">
+      <div class="summary-card">
+        <div class="summary-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+          </svg>
+        </div>
+        <h3>Total Balance</h3>
+        <p class="summary-value">{{ getTotalBalance() | currency:'USD':'symbol':'1.2-2' }}</p>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h3>Active Accounts</h3>
+        <p class="summary-value">{{ accounts.length }}</p>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h3>Account Types</h3>
+        <p class="summary-value">{{ getUniqueAccountTypes() }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Account Modal -->
+  <div *ngIf="showCreateForm" class="modal-overlay" (click)="closeCreateForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create New Account</h2>
+        <button class="close-btn" (click)="closeCreateForm()">×</button>
+      </div>
+      <form (ngSubmit)="createAccount()" #createForm="ngForm">
+        <div class="form-group">
+          <label for="accountType">Account Type</label>
+          <select id="accountType" [(ngModel)]="newAccount.type" name="type" required>
+            <option value="SAVINGS">SAVINGS</option>
+            <option value="Checking">Checking</option>
+            <option value="Business">Business</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="initialBalance">Initial Balance</label>
+          <input type="number" id="initialBalance" [(ngModel)]="newAccount.balance" name="balance" min="0" step="0.01" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeCreateForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!createForm.form.valid || actionLoading">
+            <span *ngIf="actionLoading">Creating...</span>
+            <span *ngIf="!actionLoading">Create Account</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Account Modal -->
+  <div *ngIf="showEditForm" class="modal-overlay" (click)="closeEditForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Edit Account</h2>
+        <button class="close-btn" (click)="closeEditForm()">×</button>
+      </div>
+      <form (ngSubmit)="updateAccount()" #editForm="ngForm">
+        <div class="form-group">
+          <label for="editAccountType">Account Type</label>
+          <select id="editAccountType" [(ngModel)]="editAccount.type" name="type" required>
+            <option value="SAVINGS">SAVINGS</option>
+            <option value="Checking">Checking</option>
+            <option value="Business">Business</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeEditForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!editForm.form.valid || actionLoading">
+            <span *ngIf="actionLoading">Updating...</span>
+            <span *ngIf="!actionLoading">Update Account</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div *ngIf="showDeleteModal" class="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Delete Account</h2>
+        <button class="close-btn" (click)="closeDeleteModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the account "{{ selectedAccount?.accountNumber }}"?</p>
+        <p class="warning-text">This action cannot be undone.</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-danger" (click)="deleteAccount()" [disabled]="actionLoading">
+          <span *ngIf="actionLoading">Deleting...</span>
+          <span *ngIf="!actionLoading">Delete Account</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit Modal -->
+  <div *ngIf="showDepositForm" class="modal-overlay" (click)="closeDepositForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Deposit Money</h2>
+        <button class="close-btn" (click)="closeDepositForm()">×</button>
+      </div>
+      <form (ngSubmit)="deposit()" #depositForm="ngForm">
+        <div class="form-group">
+          <label for="depositAmount">Deposit Amount</label>
+          <input type="number" id="depositAmount" [(ngModel)]="transactionAmount" name="amount" min="0.01" step="0.01" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeDepositForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!depositForm.form.valid || actionLoading">
+            <span *ngIf="actionLoading">Depositing...</span>
+            <span *ngIf="!actionLoading">Deposit</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Withdraw Modal -->
+  <div *ngIf="showWithdrawForm" class="modal-overlay" (click)="closeWithdrawForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Withdraw Money</h2>
+        <button class="close-btn" (click)="closeWithdrawForm()">×</button>
+      </div>
+      <form (ngSubmit)="withdraw()" #withdrawForm="ngForm">
+        <div class="form-group">
+          <label for="withdrawAmount">Withdraw Amount</label>
+          <input type="number" id="withdrawAmount" [(ngModel)]="transactionAmount" name="amount" min="0.01" step="0.01" [max]="selectedAccount?.balance ?? 0" required>
+        </div>
+        <div class="balance-info">
+          <p>Available Balance: {{ selectedAccount?.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeWithdrawForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!withdrawForm.form.valid || actionLoading">
+            <span *ngIf="actionLoading">Withdrawing...</span>
+            <span *ngIf="!actionLoading">Withdraw</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

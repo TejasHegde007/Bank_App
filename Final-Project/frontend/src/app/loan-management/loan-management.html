@@ -1,0 +1,484 @@
+<div class="loan-management-container">
+  <div class="content-area">
+
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Loan Management</h1>
+          <p>Manage your loans and track EMI payments</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" (click)="openApplyForm()">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 102 0v-5a1 1 0 01-1-1H10zM9 3a1 1 0 000 2H4a1 1 0 000 2h1v10a2 2 0 002 2h6a2 2 0 002-2V8h1a1 1 0 100-2H9V3z" clip-rule="evenodd"></path>
+            </svg>
+            Apply for Loan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-section" *ngIf="!loading">
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Total Loans</h3>
+            <p class="card-value">{{ getLoanSummary().totalLoans }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Active Loans</h3>
+            <p class="card-value">{{ getLoanSummary().activeLoans }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Outstanding Amount</h3>
+            <p class="card-value">{{ formatCurrency(getLoanSummary().totalOutstanding) }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card" *ngIf="getLoanSummary().nextEmiDue">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Next EMI Due</h3>
+            <p class="card-value">{{ formatDate(getLoanSummary().nextEmiDue) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMI Calculator -->
+    <div class="calculator-section">
+      <div class="calculator-card">
+        <h3>EMI Calculator</h3>
+        <div class="calculator-grid">
+          <div class="calculator-inputs">
+            <div class="input-group">
+              <label for="principal">Loan Amount</label>
+              <input
+                type="number"
+                id="principal"
+                [(ngModel)]="calculator.principal"
+                (input)="calculateEMI()"
+                class="calculator-input"
+                placeholder="100000"
+              >
+            </div>
+
+            <div class="input-group">
+              <label for="rate">Interest Rate (%)</label>
+              <input
+                type="number"
+                id="rate"
+                [(ngModel)]="calculator.rate"
+                (input)="calculateEMI()"
+                class="calculator-input"
+                step="0.1"
+                placeholder="12"
+              >
+            </div>
+
+            <div class="input-group">
+              <label for="tenure">Tenure (Months)</label>
+              <input
+                type="number"
+                id="tenure"
+                [(ngModel)]="calculator.tenure"
+                (input)="calculateEMI()"
+                class="calculator-input"
+                placeholder="12"
+              >
+            </div>
+          </div>
+
+          <div class="calculator-results">
+            <div class="result-item">
+              <span class="result-label">Monthly EMI</span>
+              <span class="result-value emi">{{ formatCurrency(calculator.emi) }}</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Total Amount</span>
+              <span class="result-value">{{ formatCurrency(calculator.totalAmount) }}</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Total Interest</span>
+              <span class="result-value">{{ formatCurrency(calculator.totalInterest) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+      <div class="search-bar">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search loans..."
+          class="search-input"
+          (input)="filteredLoans"
+        >
+        <svg class="search-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+
+      <div class="filter-controls">
+        <select [(ngModel)]="typeFilter" (change)="filteredLoans" class="filter-select">
+          <option value="all">All Types</option>
+          <option value="PERSONAL">Personal</option>
+          <option value="HOME">Home</option>
+          <option value="CAR">Car</option>
+          <option value="EDUCATION">Education</option>
+          <option value="BUSINESS">Business</option>
+        </select>
+
+        <select [(ngModel)]="statusFilter" (change)="filteredLoans" class="filter-select">
+          <option value="all">All Status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="CLOSED">Closed</option>
+          <option value="PENDING">Pending</option>
+          <option value="DEFAULTED">Defaulted</option>
+        </select>
+
+        <button class="btn-secondary" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Loans List -->
+    <div class="loans-section">
+      <div *ngIf="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading loans...</p>
+      </div>
+
+      <div *ngIf="!loading && filteredLoans.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h3>No Loans Found</h3>
+        <p>No loans match your current filters</p>
+        <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+      </div>
+
+      <div *ngIf="!loading && filteredLoans.length > 0" class="loans-grid">
+        <div
+          *ngFor="let loan of filteredLoans"
+          class="loan-card"
+          [class]="loan.status.toLowerCase() || 'active'"
+        >
+          <div class="loan-header">
+            <div class="loan-icon">
+              <span>{{ getLoanTypeIcon(loan.type) }}</span>
+            </div>
+            <div class="loan-status" [style.background-color]="getLoanStatusColor(loan.status || 'ACTIVE')">
+              {{ loan.status || 'ACTIVE' }}
+            </div>
+          </div>
+
+          <div class="loan-details">
+            <h3 class="loan-type">{{ loan.type }}</h3>
+            <p class="loan-number">{{ loan.loanNumber }}</p>
+            <div class="loan-amounts">
+              <div class="amount-item">
+                <span class="amount-label">Loan Amount</span>
+                <span class="amount-value">{{ formatCurrency(loan.amount) }}</span>
+              </div>
+              <div class="amount-item">
+                <span class="amount-label">Outstanding</span>
+                <span class="amount-value">{{ formatCurrency(loan.outstandingAmount) }}</span>
+              </div>
+              <div class="amount-item">
+                <span class="amount-label">Monthly EMI</span>
+                <span class="amount-value">{{ formatCurrency(loan.emiAmount) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="loan-actions">
+            <button class="btn-secondary" (click)="viewLoanDetails(loan)">
+              View Details
+            </button>
+            <button
+              class="btn-primary"
+              (click)="payEmi(loan.id, 0, loan.emiAmount)"
+              [disabled]="loan.status !== 'ACTIVE' || actionLoading"
+            >
+              Pay EMI
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Apply for Loan Modal -->
+<div *ngIf="showApplyForm" class="modal-overlay" (click)="closeApplyForm()">
+  <div class="modal-content large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Apply for Loan</h3>
+      <button class="modal-close" (click)="closeApplyForm()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="application-form">
+        <div class="form-section">
+          <h4>Loan Details</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="loanType">Loan Type</label>
+              <select
+                id="loanType"
+                [(ngModel)]="loanApplication.type"
+                class="form-select"
+                required
+              >
+                <option value="PERSONAL">Personal Loan</option>
+                <option value="HOME">Home Loan</option>
+                <option value="CAR">Car Loan</option>
+                <option value="EDUCATION">Education Loan</option>
+                <option value="BUSINESS">Business Loan</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="loanAmount">Loan Amount</label>
+              <input
+                type="number"
+                id="loanAmount"
+                [(ngModel)]="loanApplication.amount"
+                class="form-input"
+                min="1000"
+                step="1000"
+                required
+                placeholder="50000"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="tenure">Tenure (Months)</label>
+              <input
+                type="number"
+                id="tenure"
+                [(ngModel)]="loanApplication.tenure"
+                class="form-input"
+                min="6"
+                max="360"
+                required
+                placeholder="12"
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            class="btn-secondary"
+            (click)="checkEligibility()"
+            [disabled]="actionLoading || !loanApplication.amount || !loanApplication.type"
+          >
+            <span *ngIf="!actionLoading">Check Eligibility</span>
+            <span *ngIf="actionLoading">Checking...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeApplyForm()">Cancel</button>
+      <button
+        class="btn-primary"
+        (click)="applyForLoan()"
+        [disabled]="!eligibilityCheck?.eligible || actionLoading"
+      >
+        <span *ngIf="!actionLoading">Apply for Loan</span>
+        <span *ngIf="actionLoading">Applying...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Loan Details Modal -->
+<div *ngIf="showDetailsModal && selectedLoan" class="modal-overlay" (click)="closeDetailsModal()">
+  <div class="modal-content large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Loan Details</h3>
+      <button class="modal-close" (click)="closeDetailsModal()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="loan-details-grid">
+        <div class="detail-item">
+          <label>Loan Number</label>
+          <span>{{ selectedLoan.loanNumber }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Loan Type</label>
+          <span>{{ selectedLoan.type }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Loan Amount</label>
+          <span class="amount">{{ formatCurrency(selectedLoan.amount) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Outstanding Amount</label>
+          <span class="amount">{{ formatCurrency(selectedLoan.outstandingAmount) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Monthly EMI</label>
+          <span class="amount">{{ formatCurrency(selectedLoan.emiAmount) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Interest Rate</label>
+          <span>{{ selectedLoan.interestRate }}%</span>
+        </div>
+        <div class="detail-item">
+          <label>Tenure</label>
+          <span>{{ selectedLoan.tenure }} months</span>
+        </div>
+        <div class="detail-item">
+          <label>Status</label>
+          <span class="status" [style.color]="getLoanStatusColor(selectedLoan.status || 'ACTIVE')">
+            {{ selectedLoan.status || 'ACTIVE' }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <label>Next EMI Due</label>
+          <span>{{ formatDate(selectedLoan.nextEmiDate) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Created Date</label>
+          <span>{{ formatDate(selectedLoan.createdDate) }}</span>
+        </div>
+      </div>
+
+      <!-- EMI Schedule -->
+      <div class="emi-section" *ngIf="emiSchedule.length > 0">
+        <h4>EMI Schedule</h4>
+        <div class="emi-table">
+          <div class="emi-header">
+            <span>EMI #</span>
+            <span>Due Date</span>
+            <span>Amount</span>
+            <span>Status</span>
+            <span>Action</span>
+          </div>
+          <div
+            *ngFor="let emi of emiSchedule"
+            class="emi-row"
+            [class]="emi.status.toLowerCase() || 'pending'"
+          >
+            <span>{{ emi.emiNumber }}</span>
+            <span>{{ formatDate(emi.dueDate) }}</span>
+            <span class="amount">{{ formatCurrency(emi.amount) }}</span>
+            <span class="status-badge" [style.background-color]="getEmiStatusColor(emi.status || 'PENDING')">
+              {{ emi.status || 'PENDING' }}
+            </span>
+            <button
+              *ngIf="emi.status === 'PENDING'"
+              class="btn-small"
+              (click)="payEmi(selectedLoan!.id, emi.id, emi.amount)"
+              [disabled]="actionLoading"
+            >
+              Pay
+            </button>
+            <span *ngIf="emi.status === 'PAID'">Paid on {{ formatDate(emi.paidDate!) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeDetailsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Eligibility Check Modal -->
+<div *ngIf="showEligibilityModal && eligibilityCheck" class="modal-overlay" (click)="closeEligibilityModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Eligibility Check Result</h3>
+      <button class="modal-close" (click)="closeEligibilityModal()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="eligibility-result" [class]="eligibilityCheck.eligible ? 'eligible' : 'not-eligible'">
+        <div class="result-icon">
+          <svg *ngIf="eligibilityCheck.eligible" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <svg *ngIf="!eligibilityCheck.eligible" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+
+        <h4 *ngIf="eligibilityCheck.eligible">Congratulations! You are eligible for this loan.</h4>
+        <h4 *ngIf="!eligibilityCheck.eligible">Sorry, you are not eligible for this loan.</h4>
+
+        <div *ngIf="eligibilityCheck.eligible" class="eligibility-details">
+          <div class="detail-row">
+            <span>Maximum Loan Amount:</span>
+            <strong>{{ formatCurrency(eligibilityCheck.maxLoanAmount) }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Interest Rate:</span>
+            <strong>{{ eligibilityCheck.interestRate }}%</strong>
+          </div>
+        </div>
+
+        <p *ngIf="!eligibilityCheck.eligible && eligibilityCheck.reason" class="reason">
+          {{ eligibilityCheck.reason }}
+        </p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button *ngIf="eligibilityCheck.eligible" class="btn-primary" (click)="closeEligibilityModal()">Proceed to Apply</button>
+      <button *ngIf="!eligibilityCheck.eligible" class="btn-secondary" (click)="closeEligibilityModal()">Close</button>
+    </div>
+  </div>
+</div>

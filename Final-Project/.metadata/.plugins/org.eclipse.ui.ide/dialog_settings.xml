@@ -40,6 +40,7 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="C:\Users\tnhegde\Downloads\Final-Project\Final-Project"/>
 			<item value="C:\Users\Nandan Kashyap\Desktop\Final-Project\card-service(1)"/>
 			<item value="C:\Users\Nandan Kashyap\Desktop\Final-Project"/>
 		</list>

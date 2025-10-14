@@ -1,0 +1,307 @@
+<div class="account-management-container">
+  <div class="content-area">
+
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Account Management</h1>
+          <p>Manage all your bank accounts in one place</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" (click)="openCreateForm()">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 102 0v-5a1 1 0 01-1-1H10zM9 3a1 1 0 000 2H4a1 1 0 000 2h1v10a2 2 0 002 2h6a2 2 0 002-2V8h1a1 1 0 100-2H9V3z" clip-rule="evenodd"></path>
+            </svg>
+            Open New Account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Result -->
+    <div *ngIf="createResponse" class="alert success" style="margin: 1rem 0; padding: 0.75rem 1rem; border-radius: 8px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #065f46;">
+      <strong>Account created successfully.</strong>
+      <div><small>Response:</small></div>
+      <pre style="white-space: pre-wrap; margin: 0.5rem 0 0 0; color: inherit;">{{ createResponse | json }}</pre>
+    </div>
+    <div *ngIf="createError" class="alert error" style="margin: 1rem 0; padding: 0.75rem 1rem; border-radius: 8px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #7f1d1d;">
+      <strong>Account creation failed.</strong>
+      <div><small>Error:</small></div>
+      <pre style="white-space: pre-wrap; margin: 0.5rem 0 0 0; color: inherit;">{{ createError | json }}</pre>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-section" *ngIf="!loading">
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Total Accounts</h3>
+            <p class="card-value">{{ getAccountSummary().totalAccounts }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Total Balance</h3>
+            <p class="card-value">{{ formatBalance(getAccountSummary().totalBalance) }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card" *ngFor="let type of objectKeys(getAccountSummary().accountTypes)">
+          <div class="card-icon">
+            <span>{{ getAccountTypeIcon(type) }}</span>
+          </div>
+          <div class="card-content">
+            <h3>{{ type }} Accounts</h3>
+            <p class="card-value">{{ getAccountSummary().accountTypes[type] }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+      <div class="search-bar">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search accounts..."
+          class="search-input"
+          (input)="filteredAccounts"
+        >
+        <svg class="search-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+
+      <div class="filter-controls">
+        <select [(ngModel)]="typeFilter" (change)="filteredAccounts" class="filter-select">
+          <option value="all">All Types</option>
+          <option value="SAVINGS">SAVINGS</option>
+          <option value="Checking">Checking</option>
+          <option value="Business">Business</option>
+        </select>
+
+        <button class="btn-secondary" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Accounts List -->
+    <div class="accounts-section">
+      <div *ngIf="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading accounts...</p>
+      </div>
+
+      <div *ngIf="!loading && filteredAccounts.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h3>No Accounts Found</h3>
+        <p>No accounts match your current filters</p>
+        <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+      </div>
+
+      <div *ngIf="!loading && filteredAccounts.length > 0" class="accounts-grid">
+        <div
+          *ngFor="let account of filteredAccounts"
+          class="account-card"
+          [class]="account.status?.toLowerCase() || 'active'"
+        >
+          <div class="account-header">
+            <div class="account-icon">
+              <span>{{ getAccountTypeIcon(account.type) }}</span>
+            </div>
+            <div class="account-status" [style.background-color]="getAccountStatusColor(account.status || 'ACTIVE')">
+              {{ account.status || 'ACTIVE' }}
+            </div>
+          </div>
+
+          <div class="account-details">
+            <h3 class="account-type">{{ account.type }}</h3>
+            <p class="account-number">{{ account.accountNumber }}</p>
+            <p class="account-balance">{{ formatBalance(account.balance) }}</p>
+          </div>
+
+          <div class="account-actions">
+            <button class="btn-secondary" (click)="viewAccountDetails(account)">
+              View Details
+            </button>
+            <button
+              class="btn-danger"
+              (click)="openCloseModal(account)"
+              [disabled]="account.status === 'CLOSED'"
+            >
+              Close Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Account Modal -->
+<div *ngIf="showCreateForm" class="modal-overlay" (click)="closeCreateForm()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Open New Account</h3>
+      <button class="modal-close" (click)="closeCreateForm()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <form (ngSubmit)="createAccount()" class="modal-body">
+      <div class="form-group">
+        <label for="accountType">Account Type</label>
+        <select
+          id="accountType"
+          [(ngModel)]="newAccount.type"
+          name="accountType"
+          required
+          class="form-select"
+        >
+          <option value="SAVINGS">SAVINGS Account</option>
+          <option value="Checking">Checking Account</option>
+          <option value="Business">Business Account</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="initialBalance">Initial Balance</label>
+        <input
+          type="number"
+          id="initialBalance"
+          [(ngModel)]="newAccount.balance"
+          name="initialBalance"
+          min="0"
+          step="0.01"
+          required
+          class="form-input"
+          placeholder="0.00"
+        >
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeCreateForm()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="actionLoading">
+          <span *ngIf="!actionLoading">Create Account</span>
+          <span *ngIf="actionLoading">Creating...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Account Details Modal -->
+<div *ngIf="showDetailsModal && selectedAccount" class="modal-overlay" (click)="closeDetailsModal()">
+  <div class="modal-content large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Account Details</h3>
+      <button class="modal-close" (click)="closeDetailsModal()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="account-details-grid">
+        <div class="detail-item">
+          <label>Account Type</label>
+          <span>{{ selectedAccount.type }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Account Number</label>
+          <span>{{ selectedAccount.accountNumber }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Current Balance</label>
+          <span class="balance">{{ formatBalance(selectedAccount.balance) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Status</label>
+          <span class="status" [style.color]="getAccountStatusColor(selectedAccount.status || 'ACTIVE')">
+            {{ selectedAccount.status || 'ACTIVE' }}
+          </span>
+        </div>
+        <div class="detail-item" *ngIf="selectedAccount.createdDate">
+          <label>Created Date</label>
+          <span>{{ selectedAccount.createdDate | date:'mediumDate' }}</span>
+        </div>
+        <div class="detail-item" *ngIf="selectedAccount.lastActivity">
+          <label>Last Activity</label>
+          <span>{{ selectedAccount.lastActivity | date:'mediumDate' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeDetailsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Close Account Confirmation Modal -->
+<div *ngIf="showCloseModal && selectedAccount" class="modal-overlay" (click)="closeCloseModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Close Account</h3>
+      <button class="modal-close" (click)="closeCloseModal()">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="warning-message">
+        <svg class="warning-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <h4>Are you sure you want to close this account?</h4>
+        <p>This action cannot be undone. Make sure you have transferred all funds from this account.</p>
+      </div>
+
+      <div class="account-summary">
+        <div class="summary-item">
+          <span>Account:</span>
+          <strong>{{ selectedAccount.type }} - {{ selectedAccount.accountNumber }}</strong>
+        </div>
+        <div class="summary-item">
+          <span>Current Balance:</span>
+          <strong>{{ formatBalance(selectedAccount.balance) }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeCloseModal()">Cancel</button>
+      <button
+        class="btn-danger"
+        (click)="confirmCloseAccount()"
+        [disabled]="actionLoading || selectedAccount.balance > 0"
+      >
+        <span *ngIf="!actionLoading">Close Account</span>
+        <span *ngIf="actionLoading">Closing...</span>
+      </button>
+    </div>
+  </div>
+</div>

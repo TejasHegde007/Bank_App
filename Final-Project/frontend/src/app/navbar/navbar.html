@@ -11,7 +11,7 @@
       <a [routerLink]="['/dashboard']" class="navbar-link">
         Dashboard <span class="navbar-link-underline"></span>
       </a>
-      <a [routerLink]="['/accounts']" class="navbar-link">
+      <a [routerLink]="['/account-management']" class="navbar-link">
         Accounts <span class="navbar-link-underline"></span>
       </a>
       <a [routerLink]="['/fund-transfer']" class="navbar-link">
@@ -20,7 +20,7 @@
       <a [routerLink]="['/transactions']" class="navbar-link">
         Transactions <span class="navbar-link-underline"></span>
       </a>
-      <a [routerLink]="['/loans']" class="navbar-link">
+      <a [routerLink]="['/loan-management']" class="navbar-link">
         Loans <span class="navbar-link-underline"></span>
       </a>
       <a [routerLink]="['/cards']" class="navbar-link">
@@ -85,10 +85,10 @@
     </div>
     <nav class="mobile-sidebar-nav">
       <a [routerLink]="['/dashboard']" (click)="toggleSidenav()" class="mobile-nav-link">Dashboard</a>
-      <a [routerLink]="['/accounts']" (click)="toggleSidenav()" class="mobile-nav-link">Accounts</a>
+      <a [routerLink]="['/account-management']" (click)="toggleSidenav()" class="mobile-nav-link">Accounts</a>
       <a [routerLink]="['/fund-transfer']" (click)="toggleSidenav()" class="mobile-nav-link">Transfer</a>
       <a [routerLink]="['/transactions']" (click)="toggleSidenav()" class="mobile-nav-link">Transactions</a>
-      <a [routerLink]="['/loans']" (click)="toggleSidenav()" class="mobile-nav-link">Loans</a>
+      <a [routerLink]="['/loan-management']" (click)="toggleSidenav()" class="mobile-nav-link">Loans</a>
       <a [routerLink]="['/cards']" (click)="toggleSidenav()" class="mobile-nav-link">Cards</a>
       <a [routerLink]="['/admin']" (click)="toggleSidenav()" class="mobile-nav-link">Admin</a>
       <a [routerLink]="['/monitoring']" (click)="toggleSidenav()" class="mobile-nav-link">Monitoring</a>

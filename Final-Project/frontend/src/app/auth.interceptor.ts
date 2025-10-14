@@ -10,7 +10,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const token = localStorage.getItem('access_token');
+  const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  let token: string | null = null;
+  if (isBrowser) {
+    try {
+      token = localStorage.getItem('access_token');
+    } catch {
+      token = null;
+    }
+  }
   if (token) {
     req = req.clone({
       setHeaders: {
