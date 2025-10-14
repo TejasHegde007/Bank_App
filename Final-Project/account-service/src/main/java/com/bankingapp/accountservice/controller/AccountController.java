@@ -12,11 +12,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounts")
 @Validated
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200") 
 public class AccountController {
 
     private final AccountService accountService;
@@ -64,4 +66,13 @@ public class AccountController {
         accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable Long userId) {
+    List<AccountResponseDto> allAccounts = accountService.getAllAccounts();
+    List<AccountResponseDto> userAccounts = allAccounts.stream()
+            .filter(account -> account.getUserId().equals(userId))
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(userAccounts);
+}
 }

@@ -701,3 +701,4 @@ Caused by: org.codehaus.plexus.util.xml.pull.XmlPullParserException: end tag nam
 2025-10-14 10:08:09,343 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
 2025-10-14 10:08:09,347 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory C:\Users\tnhegde\Downloads\Final-Project\Final-Project\card-service\src\test\resources
 2025-10-14 10:08:10,286 [Worker-3: Updating Maven Dependencies] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.bankingapp:card-service:0.0.1-SNAPSHOT @ C:\Users\tnhegde\Downloads\Final-Project\Final-Project\card-service\pom.xml.
+2025-10-14 11:46:11,950 [Worker-2: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
