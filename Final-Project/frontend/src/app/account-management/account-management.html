@@ -20,7 +20,7 @@
     </div>
 
     <!-- API Result -->
-    <div *ngIf="createResponse" class="alert success" style="margin: 1rem 0; padding: 0.75rem 1rem; border-radius: 8px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #065f46;">
+    <!-- <div *ngIf="createResponse" class="alert success" style="margin: 1rem 0; padding: 0.75rem 1rem; border-radius: 8px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #065f46;">
       <strong>Account created successfully.</strong>
       <div><small>Response:</small></div>
       <pre style="white-space: pre-wrap; margin: 0.5rem 0 0 0; color: inherit;">{{ createResponse | json }}</pre>
@@ -29,7 +29,7 @@
       <strong>Account creation failed.</strong>
       <div><small>Error:</small></div>
       <pre style="white-space: pre-wrap; margin: 0.5rem 0 0 0; color: inherit;">{{ createError | json }}</pre>
-    </div>
+    </div> -->
 
     <!-- Summary Cards -->
     <div class="summary-section" *ngIf="!loading">
@@ -101,19 +101,23 @@
 
     <!-- Accounts List -->
     <div class="accounts-section">
-      <!-- We do not show a loading screen. If there are no accounts stored, show a friendly message. -->
-      <div *ngIf="filteredAccounts.length === 0" class="empty-state">
+      <div *ngIf="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading accounts...</p>
+      </div>
+
+      <div *ngIf="!loading && filteredAccounts.length === 0" class="empty-state">
         <div class="empty-icon">
           <svg fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
           </svg>
         </div>
-        <h3>No Accounts present for user</h3>
-        <p>Please open an account to get started.</p>
-        <button class="btn-primary" (click)="openCreateForm()">Open New Account</button>
+        <h3>No Accounts Found</h3>
+        <p>No accounts match your current filters</p>
+        <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
       </div>
 
-      <div *ngIf="filteredAccounts.length > 0" class="accounts-grid">
+      <div *ngIf="!loading && filteredAccounts.length > 0" class="accounts-grid">
         <div
           *ngFor="let account of filteredAccounts"
           class="account-card"
@@ -199,7 +203,7 @@
         <button type="button" class="btn-secondary" (click)="closeCreateForm()">Cancel</button>
         <button type="submit" class="btn-primary" [disabled]="actionLoading">
           <span *ngIf="!actionLoading">Create Account</span>
-          <span *ngIf="actionLoading">Creating...</span>
+          <span *ngIf="actionLoading">Created</span>
         </button>
       </div>
     </form>

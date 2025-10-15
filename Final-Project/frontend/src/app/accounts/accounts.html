@@ -59,7 +59,7 @@
             <!-- Balance -->
             <div class="account-balance-section">
               <p class="balance-label">Current Balance</p>
-              <p class="account-balance">{{ account.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+              <p class="account-balance">{{ account.balance | currency:'INR':'symbol':'1.2-2' }}</p>
               <div class="balance-status">
                 <div class="status-indicator"></div>
                 <span>Available</span>
@@ -98,7 +98,7 @@
           </svg>
         </div>
         <h3>Total Balance</h3>
-        <p class="summary-value">{{ getTotalBalance() | currency:'USD':'symbol':'1.2-2' }}</p>
+  <p class="summary-value">{{ getTotalBalance() | currency:'INR':'symbol':'1.2-2' }}</p>
       </div>
 
       <div class="summary-card">
@@ -238,7 +238,7 @@
           <input type="number" id="withdrawAmount" [(ngModel)]="transactionAmount" name="amount" min="0.01" step="0.01" [max]="selectedAccount?.balance ?? 0" required>
         </div>
         <div class="balance-info">
-          <p>Available Balance: {{ selectedAccount?.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+          <p>Available Balance: {{ selectedAccount?.balance | currency:'INR':'symbol':'1.2-2' }}</p>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" (click)="closeWithdrawForm()">Cancel</button>

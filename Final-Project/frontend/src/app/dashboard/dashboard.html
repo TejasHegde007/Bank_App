@@ -32,7 +32,7 @@
           </div>
           <div class="card-content">
             <h3>Total Balance</h3>
-            <p class="card-value">{{ getTotalBalance() | currency:'USD':'symbol':'1.2-2' }}</p>
+            <p class="card-value">{{ getTotalBalance() | currency:'INR':'symbol':'1.2-2' }}</p>
             <span class="card-change positive">+2.5% from last month</span>
           </div>
         </div>
@@ -46,7 +46,7 @@
           </div>
           <div class="card-content">
             <h3>Monthly Income</h3>
-            <p class="card-value">{{ getMonthlyIncome() | currency:'USD':'symbol':'1.2-2' }}</p>
+            <p class="card-value">{{ getMonthlyIncome() | currency:'INR':'symbol':'1.2-2' }}</p>
             <span class="card-change positive">+12.3% from last month</span>
           </div>
         </div>
@@ -60,7 +60,7 @@
           </div>
           <div class="card-content">
             <h3>Monthly Expenses</h3>
-            <p class="card-value">{{ getMonthlyExpenses() | currency:'USD':'symbol':'1.2-2' }}</p>
+            <p class="card-value">{{ getMonthlyExpenses() | currency:'INR':'symbol':'1.2-2' }}</p>
             <span class="card-change negative">+5.7% from last month</span>
           </div>
         </div>
@@ -89,7 +89,7 @@
           <div class="card-content">
             <h3>Active Loans</h3>
             <p class="card-value">{{ loanSummary.activeLoans || 0 }}</p>
-            <span class="card-change neutral">${{ loanSummary.totalOutstanding || 0 }} outstanding</span>
+            <span class="card-change neutral">₹{{ loanSummary.totalOutstanding || 0 }} outstanding</span>
           </div>
         </div>
 
@@ -103,7 +103,7 @@
           <div class="card-content">
             <h3>Active Cards</h3>
             <p class="card-value">{{ cardSummary.activeCards || 0 }}</p>
-            <span class="card-change neutral">${{ cardSummary.totalLimit || 0 }} limit</span>
+            <span class="card-change neutral">₹{{ cardSummary.totalLimit || 0 }} limit</span>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@
                 <div class="account-number">{{ account.accountNumber }}</div>
               </div>
               <div class="account-balance">
-                {{ account.balance | currency:'USD':'symbol':'1.2-2' }}
+                {{ account.balance | currency:'INR':'symbol':'1.2-2' }}
               </div>
             </div>
           </div>
@@ -257,7 +257,7 @@
               <div class="transaction-amount" [class]="transaction.type.toLowerCase()">
                 <span *ngIf="transaction.type === 'Credit'">+</span>
                 <span *ngIf="transaction.type === 'Debit'">-</span>
-                {{ transaction.amount | currency:'USD':'symbol':'1.0-0' }}
+                {{ transaction.amount | currency:'INR':'symbol':'1.0-0' }}
               </div>
             </div>
           </div>

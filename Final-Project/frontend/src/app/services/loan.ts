@@ -12,7 +12,7 @@ export class LoanService {
 
   // GET /api/loans/user/{userId}
   getUserLoans(userId: number): Observable<Loan[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/user/${userId}`).pipe(
+    return this.http.get<any[]>(`$http://localhost:8084/api/loans${userId}`).pipe(
       map((list) => (list || []).map((dto) => this.toLoan(dto)))
     );
   }

@@ -31,7 +31,7 @@
         </div>
         <div class="card-content">
           <h3>Total Income</h3>
-          <p class="card-value income">{{ totalIncome | currency:'USD':'symbol':'1.2-2' }}</p>
+          <p class="card-value income">{{ totalIncome | currency:'INR':'symbol':'1.2-2' }}</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
         </div>
         <div class="card-content">
           <h3>Total Expenses</h3>
-          <p class="card-value expense">{{ totalExpenses | currency:'USD':'symbol':'1.2-2' }}</p>
+          <p class="card-value expense">{{ totalExpenses | currency:'INR':'symbol':'1.2-2' }}</p>
         </div>
       </div>
 
@@ -58,7 +58,7 @@
         <div class="card-content">
           <h3>Net Balance</h3>
           <p class="card-value" [class]="(totalIncome - totalExpenses) >= 0 ? 'positive' : 'negative'">
-            {{ (totalIncome - totalExpenses) | currency:'USD':'symbol':'1.2-2' }}
+            {{ (totalIncome - totalExpenses) | currency:'INR':'symbol':'1.2-2' }}
           </p>
         </div>
       </div>
@@ -180,7 +180,7 @@
               </span>
             </div>
             <div class="table-cell amount-cell" [class]="transaction.type.toLowerCase()">
-              <span *ngIf="transaction.type === 'Debit'">-</span>{{ transaction.amount | currency:'USD':'symbol':'1.2-2' }}
+              <span *ngIf="transaction.type === 'Debit'">-</span>{{ transaction.amount | currency:'INR':'symbol':'1.2-2' }}
             </div>
             <div class="table-cell balance-cell">--</div>
             <div class="table-cell description-cell">
@@ -268,7 +268,7 @@
         <div class="detail-item">
           <span class="detail-label">Amount</span>
           <span class="detail-value amount-highlight" [class]="selectedTransaction.type.toLowerCase()">
-            <span *ngIf="selectedTransaction.type === 'Debit'">-</span>{{ selectedTransaction.amount | currency:'USD':'symbol':'1.2-2' }}
+            <span *ngIf="selectedTransaction.type === 'Debit'">-</span>{{ selectedTransaction.amount | currency:'INR':'symbol':'1.2-2' }}
           </span>
         </div>
         <div class="detail-item">

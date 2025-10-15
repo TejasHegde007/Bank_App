@@ -64,8 +64,8 @@ export class LoanManagementComponent implements OnInit {
 
   loadLoans(): void {
     this.loading = true;
-    const userIdStr = localStorage.getItem('user_id');
-    const userId = userIdStr ? Number(userIdStr) : 0;
+    const userIdStr = localStorage.getItem('user');
+    const userId = userIdStr ? JSON.parse(userIdStr).userId : 0;
     if (!userId) {
       this.loading = false;
       return;
@@ -252,9 +252,9 @@ export class LoanManagementComponent implements OnInit {
 
   formatCurrency(amount?: number): string {
     const n = Number(amount ?? 0);
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(n);
   }
 

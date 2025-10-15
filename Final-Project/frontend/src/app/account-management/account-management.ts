@@ -174,7 +174,10 @@ export class AccountManagementComponent implements OnInit {
     this.accountService.createAccount(this.newAccount).subscribe({
       next: (account: Account) => {
         console.log('Create account response:', account);
+        // Show temporary success response (toast)
         this.createResponse = account;
+        // Clear success message after 5 seconds
+        setTimeout(() => { this.createResponse = null; }, 5000);
         this.createError = null;
         this.accounts.push(account);
         this.closeCreateForm();
@@ -263,9 +266,9 @@ export class AccountManagementComponent implements OnInit {
   }
 
   formatBalance(balance: number): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(balance);
   }
 

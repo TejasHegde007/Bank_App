@@ -72,6 +72,7 @@ export class Register {
         this.loading = false;
         this.error = '';
         this.cd.markForCheck();
+        console.log('Registration successful, navigating to login.');
         this.router.navigate(['/']);
       },
       error: (error: any) => {
